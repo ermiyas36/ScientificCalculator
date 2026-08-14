@@ -7,6 +7,8 @@
     "userInterfaceStyle": "dark",
     "scheme": "scientificcalculator",
 
+    "icon": "./assets/images/icon.png",
+
     "android": {
       "package": "com.scientificcalculator.app"
     },
