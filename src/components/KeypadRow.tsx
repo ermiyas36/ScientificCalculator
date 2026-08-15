@@ -7,14 +7,12 @@ type Props = {
 export default function KeypadRow({
   children,
 }: Props) {
-
   return (
     <View style={styles.row}>
       {children}
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
 
@@ -27,7 +25,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
 
     marginBottom: 6,
-
   },
 
 });

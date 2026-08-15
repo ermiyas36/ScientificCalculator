@@ -6,6 +6,7 @@ import {
   Pressable,
   TextInput,
   Linking,
+  ScrollView,
 } from "react-native";
 
 import { useState } from "react";
@@ -32,11 +33,15 @@ import useCalculator from "../hooks/useCalculator";
 
 export default function CalculatorScreen() {
 
+
   const [graphExpression, setGraphExpression] =
   useState("");
 
   const [calculatorMode, setCalculatorMode] =
   useState<"basic" | "scientific" | "graph">("scientific");
+
+  const [scientificSection, setScientificSection] =
+  useState<"numbers" | "scientific">("numbers");
 
   const [feedbackText, setFeedbackText] =
     useState("");
@@ -122,6 +127,12 @@ export default function CalculatorScreen() {
         },
       ]}
     >
+    <ScrollView
+      style={styles.scrollView}
+      contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={false}
+     >
+    
 
       {/* =========================
           HEADER
@@ -164,153 +175,282 @@ export default function CalculatorScreen() {
       </View>
 
 
-      {/* =========================
-          DISPLAY
-      ========================= */}
-
-      <View style={styles.displayContainer}>
-
-        <Display
-          expression={expression}
-          result={result}
-          memory={memory}
-        />
-
-      </View>
-
-
-      {/* =========================
-          HISTORY
-      ========================= */}
-
-      <History
-        history={history}
-        onClear={clearHistory}
-      />
-
-
-      {/* =========================
-    MODE TABS
+     {/* =========================
+    CALCULATOR CONTENT
 ========================= */}
 
-<View style={styles.tabs}>
+{calculatorMode === "graph" ? (
 
-  <Pressable
-    onPress={() => {
-      setCalculatorMode("basic");
-    }}
-  >
-    <Text
-      style={[
-        styles.tab,
-        {
-          color:
-            calculatorMode === "basic"
-              ? "#3478F6"
-              : COLORS.text,
-        },
-      ]}
+  /* =========================
+      GRAPH MODE
+  ========================= */
+
+  <View style={styles.graphModeContainer}>
+
+     {/* Graph Back Button */}
+
+    <Pressable
+      style={styles.graphBackButton}
+      onPress={() => {
+        setCalculatorMode("scientific");
+      }}
     >
-      Basic
-    </Text>
-  </Pressable>
+      <Text
+        style={[
+          styles.graphBackText,
+          {
+            color: COLORS.text,
+          },
+        ]}
+      >
+        ‹
+      </Text>
 
+      <Text
+        style={[
+          styles.graphBackLabel,
+          {
+            color: COLORS.text,
+          },
+        ]}
+      >
+        Back
+      </Text>
+    </Pressable>
 
-  <Pressable
-    onPress={() => {
-      setCalculatorMode("scientific");
-    }}
-  >
-    <Text
-      style={[
-        styles.tab,
-        {
-          color:
-            calculatorMode === "scientific"
-              ? "#3478F6"
-              : COLORS.text,
-        },
-      ]}
-    >
-      Scientific
-    </Text>
-  </Pressable>
-
-
-  <Pressable
-    onPress={() => {
-      setCalculatorMode("graph");
-    }}
-  >
-    <Text
-      style={[
-        styles.tab,
-        {
-          color:
-            calculatorMode === "graph"
-              ? "#3478F6"
-              : COLORS.text,
-        },
-      ]}
-    >
-      Graph
-    </Text>
-  </Pressable>
-
-</View>
-
-      {/* =========================
-    KEYPAD / GRAPH
-========================= */}
-
-<View style={styles.keypad}>
-
-  {calculatorMode === "graph" ? (
 
     <GraphPad
-  expression={graphExpression}
-  setExpression={setGraphExpression}
-  onPlot={() => {
-    console.log("Plot:", graphExpression);
-  }}
-  isDark={isDark}
-  angleMode={angleMode}
-/>
+      expression={graphExpression}
+      setExpression={setGraphExpression}
+      onPlot={() => {
+        console.log("Plot:", graphExpression);
+      }}
+      isDark={isDark}
+      angleMode={angleMode}
+    />
 
-  ) : (
+  </View>
 
-    <>
+) : (
 
-      {/* Memory */}
+  /* =========================
+      NORMAL CALCULATOR
+  ========================= */
 
-      <MemoryPad
-        memoryClear={memoryClear}
-        memoryRecall={memoryRecall}
-        memoryAdd={memoryAdd}
-        memorySubtract={memorySubtract}
+  <>
+
+    {/* DISPLAY */}
+
+    <View style={styles.displayContainer}>
+
+      <Display
+        expression={expression}
+        result={result}
+        memory={memory}
       />
 
-
-      {/* Scientific */}
-
-      <ScientificPad
-        angleMode={angleMode}
-        toggleAngleMode={toggleAngleMode}
-        handlePress={handlePress}
-      />
+    </View>
 
 
-      {/* Numbers */}
+    {/* HISTORY */}
 
-      <NumberPad
-        handlePress={handlePress}
-      />
+    <History
+      history={history}
+      onClear={clearHistory}
+    />
 
-    </>
 
-  )}
+    {/* =========================
+        MODE TABS
+    ========================= */}
 
-</View>
+    <View style={styles.tabs}>
+
+      <Pressable
+        onPress={() => {
+          setCalculatorMode("basic");
+        }}
+      >
+        <Text
+          style={[
+            styles.tab,
+            {
+              color:
+                calculatorMode === "basic"
+                  ? "#3478F6"
+                  : COLORS.text,
+            },
+          ]}
+        >
+          Basic
+        </Text>
+      </Pressable>
+
+
+      <Pressable
+        onPress={() => {
+          setCalculatorMode("scientific");
+        }}
+      >
+        <Text
+          style={[
+            styles.tab,
+            {
+              color:
+                calculatorMode === "scientific"
+                  ? "#3478F6"
+                  : COLORS.text,
+            },
+          ]}
+        >
+          Scientific
+        </Text>
+      </Pressable>
+
+
+      <Pressable
+        onPress={() => {
+          setCalculatorMode("graph");
+        }}
+      >
+        <Text
+          style={[
+            styles.tab,
+            {
+              color: COLORS.text,
+            },
+          ]}
+        >
+          Graph
+        </Text>
+      </Pressable>
+
+    </View>
+
+
+    {/* =========================
+        KEYPAD
+    ========================= */}
+
+    <View style={styles.keypad}>
+
+      {/* BASIC */}
+
+      {calculatorMode === "basic" && (
+        <NumberPad
+          handlePress={handlePress}
+        />
+      )}
+
+
+      {/* SCIENTIFIC */}
+
+      {calculatorMode === "scientific" && (
+        <>
+
+          {/* Scientific navigation */}
+
+          <View style={styles.scientificNavigation}>
+
+            <Pressable
+              style={[
+                styles.scientificNavButton,
+                scientificSection === "numbers" &&
+                  styles.scientificNavButtonActive,
+              ]}
+              onPress={() => {
+                setScientificSection("numbers");
+              }}
+            >
+              <Text
+                style={[
+                  styles.scientificNavText,
+                  {
+                    color:
+                      scientificSection === "numbers"
+                        ? "#3478F6"
+                        : COLORS.text,
+                  },
+                ]}
+              >
+                ‹
+              </Text>
+            </Pressable>
+
+
+            <Pressable
+              style={[
+                styles.scientificNavButton,
+                scientificSection === "scientific" &&
+                  styles.scientificNavButtonActive,
+              ]}
+              onPress={() => {
+                setScientificSection("scientific");
+              }}
+            >
+              <Text
+                style={[
+                  styles.scientificNavText,
+                  {
+                    color:
+                      scientificSection === "scientific"
+                        ? "#3478F6"
+                        : COLORS.text,
+                  },
+                ]}
+              >
+                ›
+              </Text>
+            </Pressable>
+
+          </View>
+
+
+          {/* NUMBER PAD */}
+
+          {scientificSection === "numbers" && (
+            <NumberPad
+              handlePress={handlePress}
+            />
+          )}
+
+
+          {/* SCIENTIFIC PAD */}
+
+          {scientificSection === "scientific" && (
+            <>
+
+              <MemoryPad
+                memoryClear={memoryClear}
+                memoryRecall={memoryRecall}
+                memoryAdd={memoryAdd}
+                memorySubtract={memorySubtract}
+              />
+
+              <ScientificPad
+                angleMode={angleMode}
+                toggleAngleMode={toggleAngleMode}
+                handlePress={handlePress}
+              />
+
+            </>
+          )}
+
+        </>
+      )}
+
+    </View>
+
+  </>
+
+)}
+
+
+
+</ScrollView>
+
+
+
 
 
       {/* =========================
@@ -872,7 +1012,7 @@ export default function CalculatorScreen() {
   </Pressable>
 </Modal>
   
-    </View>
+  </View>
   );
 }
 
@@ -884,16 +1024,23 @@ export default function CalculatorScreen() {
 const styles = StyleSheet.create({
 
   container: {
-    flex: 1,
-    width: "100%",
-    maxWidth: 430,
-    alignSelf: "center",
+  flex: 1,
+  width: "100%",
+  maxWidth: 430,
+  alignSelf: "center",
+},
 
-    paddingHorizontal: 10,
-    paddingTop: 35,
+scrollView: {
+  flex: 1,
+  width: "100%",
+},
 
-    justifyContent: "flex-start",
-  },
+scrollContent: {
+  paddingHorizontal: 10,
+  paddingTop: 10,
+  paddingBottom: 30,
+  flexGrow: 1,
+},
 
 
  header: {
@@ -939,13 +1086,11 @@ menuButton: {
   },
 
 
-  keypad: {
-    flex: 1,
-
-    width: "100%",
-
-    justifyContent: "flex-start",
-  },
+ keypad: {
+  flex: 1,
+  width: "100%",
+  minHeight: 0,
+},
 
   helpOverlay: {
   flex: 1,
@@ -983,6 +1128,11 @@ helpSection: {
   fontWeight: "bold",
   marginTop: 8,
   marginBottom: 6,
+},
+
+graphModeContainer: {
+  width: "100%",
+  minHeight: 600,
 },
 
 helpText: {
@@ -1098,5 +1248,54 @@ feedbackSendText: {
   fontSize: 15,
   fontWeight: "bold",
 },
+
+scientificNavigation: {
+  flexDirection: "row",
+  justifyContent: "center",
+  alignItems: "center",
+  marginBottom: 6,
+  gap: 12,
+},
+
+scientificNavButton: {
+  width: 42,
+  height: 30,
+  borderRadius: 10,
+  justifyContent: "center",
+  alignItems: "center",
+},
+
+scientificNavButtonActive: {
+  backgroundColor: "rgba(52, 120, 246, 0.12)",
+},
+
+scientificNavText: {
+  fontSize: 24,
+  fontWeight: "bold",
+},
+
+graphBackButton: {
+  flexDirection: "row",
+  alignItems: "center",
+  alignSelf: "flex-start",
+
+  paddingVertical: 6,
+  paddingHorizontal: 8,
+
+  marginBottom: 6,
+},
+
+graphBackText: {
+  fontSize: 30,
+  fontWeight: "bold",
+  lineHeight: 30,
+},
+
+graphBackLabel: {
+  fontSize: 15,
+  fontWeight: "600",
+  marginLeft: 2,
+},
+
 
 });
